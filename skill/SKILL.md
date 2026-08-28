@@ -3,7 +3,7 @@ name: codex-with-chatgpt
 description: >
   Use ChatGPT (web) as the planning and review brain for Codex coding sessions,
   while Codex keeps full execution ownership. Use when the user says
-  "使用 Codex with ChatGPT ..." / "Set up Codex with ChatGPT" / "用 ChatGPT 规划",
+  "Set up Codex with ChatGPT" / "Use Codex with ChatGPT ..." / "Connect ChatGPT to this workspace",
   when they ask to connect ChatGPT to the current workspace, disconnect it,
   or run a task through the ChatGPT planning loop.
 ---
@@ -22,7 +22,7 @@ whatever data it needs by itself.
 
 1. NEVER paste file contents, diffs, or logs into ChatGPT. ChatGPT reads them through MCP.
 2. NEVER show the user technical internals (MCP, OAuth, PKCE, tunnel, ports, localhost).
-   Speak in terms of "连接 ChatGPT / 安全连接 / 配对".
+   Speak in terms of "connection to ChatGPT / secure connection / pairing".
 3. The pairing code is the ONLY credential you may ever type into a browser.
    Never touch OAuth tokens, cookies, or session storage.
 4. If something fails, run `c2c doctor` and repair silently. Only involve the user
@@ -40,7 +40,7 @@ whatever data it needs by itself.
   `corepack pnpm install && corepack pnpm build` inside it.
 - Always pass `-w <workspace root>` (the project the user is working on, NOT the c2c repo).
 
-## Workflow: first-time setup（"使用 Codex with ChatGPT 完成首次配置"）
+## Workflow: first-time setup
 
 1. Detect prerequisites yourself: `node --version` (>= 20), and check `cloudflared`.
    - If cloudflared is missing on macOS run `brew install cloudflared`; on Windows use
@@ -51,8 +51,7 @@ whatever data it needs by itself.
    Pairing codes expire in ~5 minutes: run `c2c pair --json` for a fresh one if you're slow.
 4. Open ChatGPT (chatgpt.com) in the BUILT-IN browser. Using Computer Use:
    a. Go to Settings → Connectors / Apps. If connector creation is hidden, enable
-      开发人员模式 ("Developer mode" in English UIs) under
-      设置 → 应用与连接器 → 高级 (Settings → Apps & Connectors → Advanced).
+      Developer mode under Settings → Apps & Connectors → Advanced.
    b. Create a new connector:
       - Name: `Codex with ChatGPT`
       - Description: `Securely connect ChatGPT to the current Codex workspace for planning and review.`
@@ -69,19 +68,19 @@ whatever data it needs by itself.
 ```
 Codex with ChatGPT
 
-✓ 当前项目已识别
-✓ Workspace Bridge 已启动
-✓ 安全连接已建立
-✓ ChatGPT 已连接
-✓ 文件读取测试通过
+✓ Project detected
+✓ Workspace Bridge started
+✓ Secure connection established
+✓ ChatGPT connected
+✓ File read test passed
 
 Ready.
 ```
 
 If a login wall appears (ChatGPT, Cloudflare): stop, tell the user the ONE thing
-to do ("请登录 ChatGPT，完成后告诉我'好了'"), then continue.
+to do ("Please sign in to ChatGPT and tell me 'done' when finished"), then continue.
 
-## Workflow: coding task（"使用 Codex with ChatGPT 完成 XXX"）
+## Workflow: coding task
 
 Protocol states: INIT → PLAN → EXECUTING → EXECUTED → REVIEW → (PLAN | DONE | BLOCKED).
 All control messages start with `[C2C]`. Keep them under 1 KB. Docs: `docs/protocol.md`.
@@ -134,18 +133,18 @@ Please independently inspect the workspace and current git diff through MCP.
 7. ChatGPT reviews via MCP (git_diff, read_file, test_status) and replies
    DONE / PLAN (next iteration) / BLOCKED.
 8. Loop. Respect maxIterations (`.c2c.json`, default 12). At the limit, pause and ask
-   the user: "已完成 12 轮协作，仍有未解决问题，是否继续？"
+   the user: "Completed 12 collaboration rounds with unresolved issues. Continue?"
 9. On DONE: summarize the result to the user in plain language.
 10. On BLOCKED: read ChatGPT's reason, fix what you can, or surface the single
-    decision the user must make.
+     decision the user must make.
 
-## Workflow: disconnect（"断开 ChatGPT"）
+## Workflow: disconnect
 
 1. `c2c unpair -w <workspace>` (revokes all tokens immediately).
 2. Optionally remove the connector in ChatGPT settings via Computer Use.
-3. Tell the user: "已断开 ChatGPT 对该项目的访问。"
+3. Tell the user: "ChatGPT access to this project has been revoked."
 
-## Workflow: repair（anything looks broken）
+## Workflow: repair (anything looks broken)
 
 1. `c2c doctor -w <workspace> --json` — it restarts the bridge and tunnel itself.
 2. If the tunnel URL changed (quick tunnels change on restart), update the

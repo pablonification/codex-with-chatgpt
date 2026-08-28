@@ -11,7 +11,7 @@ can (restarts the bridge, restarts the tunnel) without asking.
 
 ## Common situations
 
-### "Bridge 未运行"
+### "Bridge not running"
 `c2c start` (or let doctor do it). Bridge logs:
 `c2c logs`, or verbose: `c2c logs --verbose`.
 
@@ -23,7 +23,7 @@ Quick Tunnel URLs change whenever the tunnel restarts.
    automatically via Computer Use).
 3. Re-authorize with a fresh pairing code: `c2c pair`.
 
-### "配对码无效/过期"
+### "Invalid/expired pairing code"
 Pairing codes are one-time and expire after ~5 minutes:
 
 ```
